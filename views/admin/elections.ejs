@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Election Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <div class="container mx-auto p-6 max-w-4xl">
+        <h1 class="text-4xl font-bold mb-8 text-gray-800">Election Dashboard</h1>
+        
+        <div class="mb-8">
+            <div class="inline-flex rounded-md shadow-sm" role="group">
+                <button onclick="filterElections('all')" class="filterBtn px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-l-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 ">
+                    All Elections
+                </button>
+                <button onclick="filterElections('running')" class="filterBtn px-4 py-2 text-sm font-medium text-gray-900 bg-white border-t border-b border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 ">
+                    Running
+                </button>
+                <button onclick="filterElections('ended')" class="filterBtn px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-r-md hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 ">
+                    Ended
+                </button>
+            </div>
+        </div>
+
+        <% if (elections.length > 0) { %>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <% elections.forEach(election => { %>
+                    <div class="bg-white rounded-lg shadow-md p-6 transition duration-300 ease-in-out transform hover:scale-105" data-status="<%= new Date(election.endDate) > new Date() ? 'running' : 'ended' %>">
+                        <h2 class="text-xl font-semibold mb-2 text-gray-800"><%= election.name %></h2>
+                        <p class="text-gray-600 mb-4">
+                            <%= election.startDate ? new Date(election.startDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A' %> to 
+                            <%= election.endDate ? new Date(election.endDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A' %>
+                        </p>
+                        <div class="flex flex-wrap gap-2">
+                            <a href="/election/<%= election._id %>/edit" class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300">
+                                Edit
+                                <svg class="w-3.5 h-3.5 ml-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 7h12m0 0L9 1m4 6L9 13"/>
+                                </svg>
+                            </a>
+                            <a href="/election/<%= election._id %>/add-candidates" class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-green-600 rounded-lg hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300">
+                                Add Candidates
+                                <svg class="w-3.5 h-3.5 ml-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 18">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 1v16M1 9h16"/>
+                                </svg>
+                            </a>
+                            <form action="/election/<%= election._id %>/end" method="POST" class="inline">
+                                <button class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-red-600 rounded-lg hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300">
+                                    End Election
+                                    <svg class="w-3.5 h-3.5 ml-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                                    </svg>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+        <% } else { %>
+            <p class="text-gray-600 text-center py-8">No elections available at the moment.</p>
+        <% } %>
+    </div>
+
+    <script>
+        function filterElections(status) {
+            const elections = document.querySelectorAll('[data-status]');
+            elections.forEach(election => {
+                if (status === 'all' || election.dataset.status === status) {
+                    election.style.display = 'block';
+                } else {
+                    election.style.display = 'none';
+                }
+            });
+
+            // Update active button styles
+            const buttons = document.querySelectorAll('.filterBtn');
+            buttons.forEach(button => {
+                if (button.textContent.trim().toLowerCase().includes(status)) {
+                    button.classList.add('bg-blue-700', 'text-white');
+                    button.classList.remove('bg-white', 'text-gray-900');
+                } else {
+                    button.classList.remove('bg-blue-700', 'text-white');
+                    button.classList.add('bg-white', 'text-gray-900');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

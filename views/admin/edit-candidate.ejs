@@ -1,0 +1,30 @@
+
+<h1 class="text-2xl font-bold mb-4">Edit Candidate</h1>
+
+<% if (errors && errors.length > 0) { %>
+    <% errors.forEach(error => { %>
+        <p class="alert alert-danger bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4"><%= error.msg %></p>
+    <% }) %>
+<% } %>
+
+<form action="/admin/candidates/<%= candidate._id %>/edit" method="POST" class="bg-gray-100 p-6 rounded-lg shadow-md">
+    <div class="form-group mb-4">
+        <label for="name" class="block text-gray-700 font-bold mb-2">Candidate Name</label>
+        <input type="text" name="name" value="<%= candidate.name %>" placeholder="Candidate Name" class="form-control w-full p-2 border border-gray-300 rounded" required>
+    </div>
+    <div class="form-group mb-4">
+        <label for="age" class="block text-gray-700 font-bold mb-2">Age</label>
+        <input type="number" name="age" value="<%= candidate.age %>" placeholder="Age" class="form-control w-full p-2 border border-gray-300 rounded" required>
+    </div>
+    <div class="form-group mb-4">
+        <label for="party" class="block text-gray-700 font-bold mb-2">Party Affiliation</label>
+        <input type="text" name="party" value="<%= candidate.party %>" placeholder="Party Affiliation" class="form-control w-full p-2 border border-gray-300 rounded" required>
+    </div>
+    <div class="form-group mb-4">
+        <label for="biography" class="block text-gray-700 font-bold mb-2">Biography</label>
+        <textarea name="biography" placeholder="Biography" class="form-control w-full p-2 border border-gray-300 rounded" required><%= candidate.biography %></textarea>
+    </div>
+    <button type="submit" class="bg-blue-500 text-white p-2 rounded hover:bg-blue-700">Update Candidate</button>
+</form>
+
+<a href="/admin/candidates" class="text-blue-500 hover:underline mt-4 inline-block">Back to Manage Candidates</a>

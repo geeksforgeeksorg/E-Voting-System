@@ -1,0 +1,76 @@
+<style>
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #f3f4f6;
+    }
+
+    .card {
+        transition: transform 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-10px);
+    }
+</style>
+
+<div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+    <h1 class="text-4xl font-bold mb-8 text-gray-800 text-center">Welcome, <%= user.name %>
+    </h1>
+
+    <!-- Voting History -->
+    <div class="bg-white p-8 rounded-lg shadow-lg mb-12">
+        <h2 class="text-3xl font-semibold mb-6 text-gray-800">Your Voting History</h2>
+        <% if (userVotes.length> 0) { %>
+            <ul class="space-y-4">
+                <% userVotes.forEach(vote=> { %>
+                    <% if (vote.candidateId && vote.electionId) { %>
+                        <li class="bg-gray-100 p-4 rounded-lg shadow-md flex items-center">
+                            <div class="flex-grow">
+                                <p class="text-lg text-gray-700">You voted for <strong class="text-indigo-600">
+                                        <%= vote.candidateId.name %>
+                                    </strong> in <strong class="text-indigo-600">
+                                        <%= vote.electionId.name %>
+                                    </strong></p>
+                            </div>
+                        </li>
+                        <% } else { %>
+                            <li class="bg-red-100 p-4 rounded-lg shadow-md flex items-center">
+                                <div class="flex-grow">
+                                    <p class="text-lg text-red-700">There was an issue displaying this vote. Please
+                                        contact support.</p>
+                                </div>
+                            </li>
+                            <% } %>
+                                <% }) %>
+            </ul>
+            <% } else { %>
+                <p class="text-lg text-gray-700">You have not voted in any elections yet.</p>
+                <% } %>
+    </div>
+
+    <!-- Available Elections -->
+    <div class="bg-white p-8 rounded-lg shadow-lg">
+        <h2 class="text-3xl font-semibold mb-6 text-gray-800">Available Elections</h2>
+        <% if (elections.length> 0) { %>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <% elections.forEach(election=> { %>
+                    <div class="card bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">
+                            <%= election.name %>
+                        </h3>
+                        <p class="text-sm text-gray-600 mb-4">
+                            <span class="font-medium">Duration:</span>
+                            <%= election.startDate.toDateString() %> to <%= election.endDate.toDateString() %>
+                        </p>
+                        <a href="/vote?electionId=<%= election._id %>"
+                            class="block text-center text-white bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-md transition duration-150 ease-in-out">
+                            Vote Now
+                        </a>
+                    </div>
+                    <% }) %>
+            </div>
+            <% } else { %>
+                <p class="text-lg text-gray-700">No elections available at the moment.</p>
+                <% } %>
+    </div>
+</div>

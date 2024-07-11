@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f7f9fc;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="max-w-6xl mx-auto my-12 px-4 sm:px-6 lg:px-8">
+        <h1 class="text-4xl font-bold mb-8 text-gray-800 text-center">Welcome, Admin <%= user.name %></h1>
+
+        <!-- Overview Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-bold mb-4">Total Elections</h2>
+                <p class="text-3xl font-semibold text-indigo-600"><%= elections.length %></p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-bold mb-4">Total Candidates</h2>
+                <p class="text-3xl font-semibold text-indigo-600"><%= candidates.length %></p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-bold mb-4">Total Votes</h2>
+                <p class="text-3xl font-semibold text-indigo-600"><%= votes.length %></p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-bold mb-4">Ongoing Elections</h2>
+                <p class="text-3xl font-semibold text-yellow-600"><%= ongoingElections.length %></p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-bold mb-4">Upcoming Elections</h2>
+                <p class="text-3xl font-semibold text-green-600"><%= upcomingElections.length %></p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-bold mb-4">Ended Elections</h2>
+                <p class="text-3xl font-semibold text-red-600"><%= endedElections.length %></p>
+            </div>
+        </div>
+
+        <!-- Detailed Data Tables -->
+        <h2 class="text-3xl font-bold mb-4 text-gray-800">Elections Overview</h2>
+        <% if (elections.length > 0) { %>
+            <div class="bg-white p-6 rounded-lg shadow-md mb-8">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead>
+                        <tr>
+                            <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Election</th>
+                            <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Duration</th>
+                            <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Votes</th>
+                            <th class="px-6 py-3 bg-gray-50"></th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <% elections.forEach(election => { %>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm font-medium text-gray-900"><%= election.name %></div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-500">
+                                        <%= election.startDate ? new Date(election.startDate).toLocaleDateString() : 'N/A' %> to 
+                                        <%= election.endDate ? new Date(election.endDate).toLocaleDateString() : 'N/A' %>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="text-sm text-gray-900">
+                                        <% 
+                                            const electionVotes = voteData && voteData.find(v => v._id && election._id && v._id.toString() === election._id.toString());
+                                            const totalVotes = electionVotes ? electionVotes.totalVotes : 0;
+                                        %>
+                                        <%= totalVotes %>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                    <a href="/election/<%= election._id %>" class="text-indigo-600 hover:text-indigo-900">View Details</a>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        <% } else { %>
+            <p>No elections available at the moment.</p>
+        <% } %>
+
+        <h2 class="text-3xl font-bold mb-4 text-gray-800">Votes Overview</h2>
+        <% if (votes.length > 0) { %>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead>
+                        <tr>
+                            <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Voter</th>
+                            <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Candidate</th>
+                            <th class="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Election</th>
+                            <th class="px-6 py-3 bg-gray-50"></th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <% votes.forEach(vote => { %>
+                            <% if (vote.candidateId && vote.electionId && vote.userId) { %>
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm font-medium text-gray-900"><%= vote.userId.name %></div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900"><%= vote.candidateId.name %></div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm text-gray-900"><%= vote.electionId.name %></div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                        <a href="/admin/votes/<%= vote._id %>" class="text-indigo-600 hover:text-indigo-900">View Details</a>
+                                    </td>
+                                </tr>
+                            <% } else { %>
+                                <tr>
+                                    <td colspan="4" class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500">
+                                        There was an issue displaying this vote. Please contact support.
+                                    </td>
+                                </tr>
+                            <% } %>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        <% } else { %>
+            <p>No votes recorded yet.</p>
+        <% } %>
+    </div>
+</body>
+</html>

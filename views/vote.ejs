@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vote</title>
+    <link rel="stylesheet" href="/styles.css">
+    <script>
+        async function updateCandidates() {
+            const electionId = document.getElementById('election').value;
+            const candidateSelect = document.getElementById('candidate');
+            const candidateLinks = document.getElementById('candidate-links');
+            candidateSelect.innerHTML = ''; // Clear existing options
+            candidateLinks.innerHTML = ''; // Clear existing links
+
+            if (!electionId) {
+                const defaultOption = document.createElement('option');
+                defaultOption.value = '';
+                defaultOption.text = 'Select a candidate';
+                candidateSelect.add(defaultOption);
+                return;
+            }
+
+            try {
+                const response = await fetch(`/vote/candidates/${electionId}`);
+                const candidates = await response.json();
+
+                candidates.forEach(candidate => {
+                    // Populate select options
+                    const option = document.createElement('option');
+                    option.value = candidate._id;
+                    option.text = candidate.name;
+                    candidateSelect.add(option);
+
+                    // Populate candidate links
+                    const listItem = document.createElement('li');
+                    const link = document.createElement('a');
+                    link.href = `/users/candidate/${candidate._id}`;
+                    link.className = 'text-blue-500 hover:underline';
+                    link.textContent = `${candidate.name} Profile`;
+                    listItem.appendChild(link);
+                    candidateLinks.appendChild(listItem);
+                });
+            } catch (error) {
+                console.error('Failed to fetch candidates', error);
+            }
+        }
+    </script>
+</head>
+<body>
+
+    <div class="max-w-4xl mx-auto my-4 p-8 bg-white shadow-2xl rounded-lg">
+        <h1 class="text-3xl font-bold mb-6 text-indigo-700">Vote</h1>
+
+        <% if (success_msg.length) { %>
+            <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6 rounded-md" role="alert">
+                <p class="font-bold"><%= success_msg %></p>
+            </div>
+        <% } %>
+
+        <% if (error_msg.length) { %>
+            <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded-md" role="alert">
+                <p class="font-bold"><%= error_msg %></p>
+            </div>
+        <% } %>
+
+        <form action="/vote" method="POST">
+            <div class="form-group mb-4">
+                <label for="election" class="block text-sm font-medium text-gray-700 mb-1">Select Election</label>
+                <select name="electionId" id="election" class="p-2 mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border border-gray-200 rounded-md" onchange="updateCandidates()" required>
+                    <option value="">Select an election</option>
+                    <% elections.forEach(election => { %>
+                        <option value="<%= election._id %>"><%= election.name %></option>
+                    <% }) %>
+                </select>
+            </div>
+            <div class="form-group mb-4">
+                <label for="candidate" class="block text-sm font-medium text-gray-700 mb-1">Select Candidate</label>
+                <select name="candidateId" id="candidate" class="p-2 mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border border-gray-200 rounded-md" required>
+                    <option value="">Select a candidate</option>
+                </select>
+            </div>
+            <button type="submit" class="bg-blue-500 text-white p-2 rounded hover:bg-blue-700">Vote</button>
+        </form>
+        
+        <div class="form-group mt-4">
+            <label for="candidate-links" class="block text-sm font-medium text-gray-700 mb-1">View Candidate Profiles</label>
+            <ul id="candidate-links" class="list-disc pl-5">
+                <!-- Candidate links will be populated here -->
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

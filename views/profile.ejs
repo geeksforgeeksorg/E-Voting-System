@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <div class="max-w-4xl mx-auto my-8 p-8 bg-white shadow-2xl rounded-lg">
+        <h1 class="text-3xl font-bold mb-6 text-indigo-700">Your Profile</h1>
+
+        <% if (success_msg.length) { %>
+            <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6 rounded-md" role="alert">
+                <p class="font-bold"><%= success_msg %></p>
+            </div>
+        <% } %>
+
+        <% if (error_msg.length) { %>
+            <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded-md" role="alert">
+                <p class="font-bold"><%= error_msg %></p>
+            </div>
+        <% } %>
+
+        <p class="text-lg mb-4"><span class="font-semibold text-gray-600">Name:</span> <%= user.name %></p>
+        <p class="text-lg mb-4"><span class="font-semibold text-gray-600">Email:</span> <%= user.email %></p>
+
+        <a href="/users/profile/edit" class="bg-blue-500 text-white p-2 rounded hover:bg-blue-700">Edit Profile</a>
+    </div>
+</body>
+</html>

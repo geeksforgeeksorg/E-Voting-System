@@ -1,0 +1,58 @@
+<div class="bg-white shadow overflow-hidden sm:rounded-lg">
+    <div class="px-4 py-5 sm:px-6">
+        <h1 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">Manage Candidates</h1>
+    </div>
+
+    <% if (success_msg.length > 0) { %>
+        <div class="rounded-md bg-green-50 p-4 mb-4">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <svg class="h-5 w-5 text-green-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+                <div class="ml-3">
+                    <p class="text-sm font-medium text-green-800"><%= success_msg %></p>
+                </div>
+            </div>
+        </div>
+    <% } %>
+
+    <div class="px-4 py-5 sm:p-6">
+        <% if (candidates.length > 0) { %>
+            <ul class="divide-y divide-gray-200">
+                <% candidates.forEach(candidate => { %>
+                    <li class="py-4 flex justify-between items-center">
+                        <div class="flex items-center">
+                            <span class="text-lg font-medium text-gray-900"><%= candidate.name %></span>
+                        </div>
+                        <div class="ml-4 flex-shrink-0">
+                            <a href="/admin/candidates/<%= candidate._id %>" class="bg-blue-500 mx-2 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-150 ease-in-out">
+                                View
+                            </a>
+                            <a href="/admin/candidates/<%= candidate._id %>/edit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-150 ease-in-out">
+                                Edit
+                            </a>
+                            <form action="/admin/remove-candidate/<%= candidate._id %>" method="POST" class="inline-block ml-2">
+                                <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-150 ease-in-out">
+                                    Remove
+                                </button>
+                            </form>
+                        </div>
+                    </li>
+                <% }) %>
+            </ul>
+        <% } else { %>
+            <p class="text-gray-500 text-lg">No candidates found.</p>
+        <% } %>
+    </div>
+
+    <div class="px-4 py-4 sm:px-6">
+        <a href="/admin" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+            <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+            </svg>
+            Back to Admin Dashboard
+        </a>
+    </div>
+</div>

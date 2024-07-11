@@ -1,0 +1,75 @@
+ 
+
+    <div class="max-w-4xl mx-auto my-8 p-8 bg-white shadow-2xl rounded-lg">
+        <h1 class="text-3xl font-bold mb-6 text-indigo-700">Edit Election</h1>
+
+        <% if (errors.length > 0) { %>
+            <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded-md" role="alert">
+                <p class="font-bold mb-2">Please correct the following errors:</p>
+                <ul class="list-disc list-inside">
+                    <% errors.forEach(error => { %>
+                        <li><%= error.msg %></li>
+                    <% }) %>
+                </ul>
+            </div>
+        <% } %>
+
+        <form action="/election/<%= election._id %>/edit" method="POST" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Election Name</label>
+                    <input type="text" name="name" id="name" value="<%= election.name %>" class="p-2 mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border border-gray-200 rounded-md" required>
+                </div>
+                <div>
+                    <label for="location" class="block text-sm font-medium text-gray-700 mb-1">Location</label>
+                    <input type="text" name="location" id="location" value="<%= election.location %>" class="p-2 mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border border-gray-200 rounded-md" required>
+                </div>
+                <div>
+                    <label for="startDate" class="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+                    <input type="date" name="startDate" id="startDate" value="<%= election.startDate.toISOString().split('T')[0] %>" class="p-2 mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border border-gray-200 rounded-md" required>
+                </div>
+                <div>
+                    <label for="endDate" class="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+                    <input type="date" name="endDate" id="endDate" value="<%= election.endDate.toISOString().split('T')[0] %>" class="p-2 mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border border-gray-200 rounded-md" required>
+                </div>
+            </div>
+
+            <div>
+                <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                <textarea name="description" id="description" rows="3" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border border-gray-200 rounded-md" required><%= election.description %></textarea>
+            </div>
+
+            <div>
+                <label for="type" class="block text-sm font-medium text-gray-700 mb-1">Election Type</label>
+                <select name="type" id="type" class="mt-1 block w-full py-2 px-3 border border border-gray-200 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
+                    <option value="general" <%= election.type === 'general' ? 'selected' : '' %>>General</option>
+                    <option value="primary" <%= election.type === 'primary' ? 'selected' : '' %>>Primary</option>
+                    <option value="runoff" <%= election.type === 'runoff' ? 'selected' : '' %>>Runoff</option>
+                </select>
+            </div>
+
+            <div>
+                <label for="eligibility" class="block text-sm font-medium text-gray-700 mb-1">Voter Eligibility Criteria</label>
+                <textarea name="eligibility" id="eligibility" rows="3" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border border-gray-200 rounded-md" required><%= election.eligibility %></textarea>
+            </div>
+
+            <div>
+                <label for="candidates" class="block text-sm font-medium text-gray-700 mb-1">Candidates</label>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <% candidates.forEach(candidate => { %>
+                        <div>
+                            <input type="checkbox" name="candidates" value="<%= candidate._id %>" id="candidate_<%= candidate._id %>" <%= election.candidates.some(c => c._id.toString() === candidate._id.toString()) ? 'checked' : '' %>>
+                            <label for="candidate_<%= candidate._id %>" class="text-sm font-medium text-gray-700 ml-2"><%= candidate.name %></label>
+                        </div>
+                    <% }) %>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-end">
+                <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out">
+                    Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+ 
